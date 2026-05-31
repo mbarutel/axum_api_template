@@ -1,10 +1,21 @@
 #![allow(unused)] // For beginning
 
+// region:     --- Modules
+
+mod config;
+mod ctx;
+mod error;
+mod log;
+mod model;
+mod web;
+
+pub use self::error::{Error, Result};
+pub use config::Config;
+
 use std::net::SocketAddr;
 
 use crate::{ctx::Ctx, log::log_request, model::ModelController};
 
-pub use self::error::{Error, Result};
 use axum::{
     Json, Router,
     error_handling::HandleErrorLayer,
@@ -18,16 +29,16 @@ use serde::Deserialize;
 use serde_json::json;
 use tower_cookies::CookieManagerLayer;
 use tower_http::services::ServeDir;
+use tracing::{debug, info};
+use tracing_subscriber::EnvFilter;
 use uuid::Uuid;
-
-mod ctx;
-mod error;
-mod log;
-mod model;
-mod web;
 
 #[tokio::main]
 async fn main() -> Result<()> {
+    tracing_subscriber::fmt()
+        .with_env_filter(EnvFilter::from_default_env())
+        .init();
+
     // Initialize ModelController
     let mc = ModelController::new().await?;
 
@@ -52,7 +63,7 @@ async fn main() -> Result<()> {
     // region:   --- Start server
     let addr = "127.0.0.1:8080";
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
-    println!("->> LISTENING on {addr}\n");
+    info!("->> LISTENING on {addr}\n");
     axum::serve(listener, routes_hello).await.unwrap();
     // endregion --- Start server
 
@@ -65,7 +76,7 @@ async fn main_response_mapper(
     req_method: Method,
     res: Response,
 ) -> Response {
-    println!("->> {:<12} - main_response_mapper", "RES_MAPPER");
+    debug!("\n->> {:<12} - main_response_mapper", "RES_MAPPER");
     let ctx = ctx.ok();
 
     let uuid = Uuid::new_v4();
@@ -85,7 +96,7 @@ async fn main_response_mapper(
                 }
             });
 
-            println!("   ->> client_error_body: {client_error_body}");
+            debug!("\n->> client_error_body: {client_error_body}");
 
             // Build the new response from the cient_error_body.
             (*status_code, Json(client_error_body)).into_response()
@@ -95,7 +106,7 @@ async fn main_response_mapper(
     let client_error = client_status_error.unzip().1;
     log_request(uuid, req_method, uri, ctx, service_error, client_error).await;
 
-    println!();
+    debug!("\n"); // Useless in production
     error_response.unwrap_or(res)
 }
 
@@ -116,7 +127,7 @@ struct HelloParams {
 
 // e.g., `/hello?name=Mike`
 async fn handler_hello(Query(params): Query<HelloParams>) -> impl IntoResponse {
-    println!("->> {:<12} - handler_hello", "HANDLER");
+    debug!("\n->> {:<12} - handler_hello", "HANDLER");
 
     let name = params.name.as_deref().unwrap_or("World");
     Html(format!("Hello <strong>{name}!!</strong>"))
@@ -124,7 +135,7 @@ async fn handler_hello(Query(params): Query<HelloParams>) -> impl IntoResponse {
 
 // e.g., `/hello2/Mike`
 async fn handler_hello2(Path(name): Path<String>) -> impl IntoResponse {
-    println!("->> {:<12} - handler_hello2 - {name:?}", "HANDLER");
+    debug!("\n->> {:<12} - handler_hello2 - {name:?}", "HANDLER");
 
     Html(format!("Hello <strong>{name}!!</strong>"))
 }

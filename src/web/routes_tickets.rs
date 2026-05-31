@@ -3,6 +3,7 @@ use axum::{
     extract::{Path, State},
     routing::{delete, get, post},
 };
+use tracing::debug;
 
 use crate::{
     Result,
@@ -23,7 +24,7 @@ async fn create_ticket(
     ctx: Ctx,
     Json(ticket_fc): Json<TicketForCreate>,
 ) -> Result<Json<Ticket>> {
-    println!("->> {:<12} - create_ticket", "HANDLER");
+    debug!("\n->> {:<12} - create_ticket", "HANDLER");
 
     let ticket = mc.create_ticket(ctx, ticket_fc).await?;
 
@@ -31,7 +32,7 @@ async fn create_ticket(
 }
 
 async fn list_tickets(State(mc): State<ModelController>, ctx: Ctx) -> Result<Json<Vec<Ticket>>> {
-    println!("->> {:<12} - list_tickets", "HANDLER");
+    debug!("\n->> {:<12} - list_tickets", "HANDLER");
 
     let tickets = mc.list_tickets(ctx).await?;
 
@@ -43,7 +44,7 @@ async fn delete_ticket(
     ctx: Ctx,
     Path(id): Path<u64>,
 ) -> Result<Json<Ticket>> {
-    println!("->> {:<12} - delete_ticket", "HANDLER");
+    debug!("\n->> {:<12} - delete_ticket", "HANDLER");
 
     let ticket = mc.delete_ticket(ctx, id).await?;
 

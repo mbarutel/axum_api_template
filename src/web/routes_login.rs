@@ -2,6 +2,7 @@ use axum::{Json, Router, routing::post};
 use serde::Deserialize;
 use serde_json::{Value, json};
 use tower_cookies::{Cookie, Cookies};
+use tracing::debug;
 
 use crate::{Error, Result, web};
 
@@ -10,7 +11,7 @@ pub fn routes() -> Router {
 }
 
 async fn api_login(cookies: Cookies, payload: Json<LoginPayload>) -> Result<Json<Value>> {
-    println!("->> {:<12} - api_login", "HANDLER");
+    debug!("\n->> {:<12} - api_login", "HANDLER");
 
     // TODO: Implement real db/auth logic.
     if payload.username != "mike" || payload.password != "secret" {
