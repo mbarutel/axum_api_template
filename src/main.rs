@@ -9,6 +9,9 @@ mod log;
 mod model;
 mod web;
 
+// #[cfg(test)] // Commented during early development.
+pub mod _dev_utils;
+
 pub use self::error::{Error, Result};
 pub use config::Config;
 
@@ -38,6 +41,9 @@ async fn main() -> Result<()> {
     tracing_subscriber::fmt()
         .with_env_filter(EnvFilter::from_default_env())
         .init();
+
+    // -- FOR DEV ONLY
+    _dev_utils::init_dev().await;
 
     // Initialize ModelController
     let mc = ModelController::new().await?;
