@@ -22,6 +22,9 @@ pub enum Error {
 
     // -- Model.
     TicketDeleteFailIdNotFound { id: u64 },
+
+    // -- Context
+    CtxCannotNewRootCtx,
 }
 
 impl IntoResponse for Error {

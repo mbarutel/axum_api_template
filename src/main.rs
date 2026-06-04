@@ -17,7 +17,7 @@ pub use config::Config;
 
 use std::net::SocketAddr;
 
-use crate::{ctx::Ctx, log::log_request, model::ModelController};
+use crate::{ctx::Ctx, log::log_request};
 
 use axum::{
     Json, Router,
@@ -46,7 +46,7 @@ async fn main() -> Result<()> {
     _dev_utils::init_dev().await;
 
     // Initialize ModelController
-    let mc = ModelController::new().await?;
+    let mc = model::ModelManager::new().await?;
 
     let routes_apis = web::routes_tickets::routes(mc.clone())
         .route_layer(middleware::from_fn(web::mw_auth::mw_require_auth));
