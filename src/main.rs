@@ -46,15 +46,15 @@ async fn main() -> Result<()> {
     _dev_utils::init_dev().await;
 
     // Initialize ModelController
-    let mc = model::ModelManager::new().await?;
+    let mc = model::ModelManager::new().await.unwrap(); // FIXME
 
-    let routes_apis = web::routes_tickets::routes(mc.clone())
-        .route_layer(middleware::from_fn(web::mw_auth::mw_require_auth));
+    // let routes_apis = web::routes_tickets::routes(mc.clone())
+    //     .route_layer(middleware::from_fn(web::mw_auth::mw_require_auth));
 
     let routes_hello = Router::new()
         .merge(routes_hello())
         .merge(web::routes_login::routes())
-        .nest("/api", routes_apis)
+        // .nest("/api", routes_apis)
         // .layer(middleware::map_response::<_, (Option<Ctx>, Uri, Method)>(
         //     main_response_mapper,
         // ))

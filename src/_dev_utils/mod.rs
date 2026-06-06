@@ -4,7 +4,7 @@ mod dev_db;
 use tokio::sync::OnceCell;
 use tracing::info;
 
-use crate::model::ModelManager;
+use crate::{ctx::Ctx, model::ModelManager};
 // endregion:  -- Modules
 
 // Initialize environment for local development.
@@ -31,4 +31,8 @@ pub async fn init_test() -> ModelManager {
         .await;
 
     mm.clone()
+}
+
+pub async fn seed_tasks(ctx: &Ctx, mm: &ModelManager, titles: &[&str]) -> Result<Vec<Task>> {
+    todo!()
 }

@@ -1,53 +1,53 @@
-use axum::{
-    Json, Router,
-    extract::{Path, State},
-    routing::{delete, get, post},
-};
-use tracing::debug;
+// use axum::{
+//     Json, Router,
+//     extract::{Path, State},
+//     routing::{delete, get, post},
+// };
+// use tracing::debug;
 
-use crate::{
-    Result,
-    ctx::Ctx,
-    model::{ModelController, Ticket, TicketForCreate},
-};
+// use crate::{
+//     Result,
+//     ctx::Ctx,
+//     model::{ModelController, Ticket, TicketForCreate},
+// };
 
-pub fn routes(mc: ModelController) -> Router {
-    Router::new()
-        .route("/tickets", post(create_ticket).get(list_tickets))
-        .route("/tickets/{id}", delete(delete_ticket))
-        .with_state(mc)
-}
+// pub fn routes(mc: ModelController) -> Router {
+//     Router::new()
+//         .route("/tickets", post(create_ticket).get(list_tickets))
+//         .route("/tickets/{id}", delete(delete_ticket))
+//         .with_state(mc)
+// }
 
-// region:      REST Handlers
-async fn create_ticket(
-    State(mc): State<ModelController>,
-    ctx: Ctx,
-    Json(ticket_fc): Json<TicketForCreate>,
-) -> Result<Json<Ticket>> {
-    debug!("\n->> {:<12} - create_ticket", "HANDLER");
+// // region:      REST Handlers
+// async fn create_ticket(
+//     State(mc): State<ModelController>,
+//     ctx: Ctx,
+//     Json(ticket_fc): Json<TicketForCreate>,
+// ) -> Result<Json<Ticket>> {
+//     debug!("\n->> {:<12} - create_ticket", "HANDLER");
 
-    let ticket = mc.create_ticket(ctx, ticket_fc).await?;
+//     let ticket = mc.create_ticket(ctx, ticket_fc).await?;
 
-    Ok(Json(ticket))
-}
+//     Ok(Json(ticket))
+// }
 
-async fn list_tickets(State(mc): State<ModelController>, ctx: Ctx) -> Result<Json<Vec<Ticket>>> {
-    debug!("\n->> {:<12} - list_tickets", "HANDLER");
+// async fn list_tickets(State(mc): State<ModelController>, ctx: Ctx) -> Result<Json<Vec<Ticket>>> {
+//     debug!("\n->> {:<12} - list_tickets", "HANDLER");
 
-    let tickets = mc.list_tickets(ctx).await?;
+//     let tickets = mc.list_tickets(ctx).await?;
 
-    Ok(Json(tickets))
-}
+//     Ok(Json(tickets))
+// }
 
-async fn delete_ticket(
-    State(mc): State<ModelController>,
-    ctx: Ctx,
-    Path(id): Path<u64>,
-) -> Result<Json<Ticket>> {
-    debug!("\n->> {:<12} - delete_ticket", "HANDLER");
+// async fn delete_ticket(
+//     State(mc): State<ModelController>,
+//     ctx: Ctx,
+//     Path(id): Path<u64>,
+// ) -> Result<Json<Ticket>> {
+//     debug!("\n->> {:<12} - delete_ticket", "HANDLER");
 
-    let ticket = mc.delete_ticket(ctx, id).await?;
+//     let ticket = mc.delete_ticket(ctx, id).await?;
 
-    Ok(Json(ticket))
-}
-// endregion:   REST Handlers
+//     Ok(Json(ticket))
+// }
+// // endregion:   REST Handlers

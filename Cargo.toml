@@ -22,3 +22,4 @@ uuid = { version = "1.23.2", features = ["v4", "fast-rng"] }
 [dev-dependencies]
 anyhow = "1.0.102"
 httpc-test = "0.1.10"
+serial_test = "2"
